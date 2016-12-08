@@ -1,3 +1,10 @@
+machine:
+  node:
+    version: 6.9.1
+
+general:
+  build_dir: src
+
 deployment:
   npm:
     branch: master
