@@ -3,7 +3,7 @@ var chai = require('chai');
 // var assert = chai.assert;
 var expect = chai.expect;
 var sinon = require('sinon');
-var index = require('../index.js');
+var index = require('../src/index.js');
 
 describe('index', function () {
   var sandbox;

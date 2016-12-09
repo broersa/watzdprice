@@ -2,13 +2,10 @@ machine:
   node:
     version: 6.9.1
 
-general:
-  build_dir: src
-
 deployment:
   npm:
     branch: master
     commands:
       # login using environment variables
       - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
-      - npm run 2npm
+      - npm publish
