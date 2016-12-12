@@ -21,8 +21,10 @@ describe('index', function () {
   it('should run', function () {
     // sandbox.stub(config, 'get', function (param) {
     //   return '';
-    // });
-    var x = index.bulkUpdate();
-    expect(x).to.be.false;
+    // })
+    index.updateProduct({name:'andre broers', url: 'http://www.example.com'}, function (error, result) {
+      console.log(result);
+      expect(error).to.be.null;
+    });
   });
 });
