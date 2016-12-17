@@ -47,6 +47,9 @@ module.exports = {
           if (error) {
             return cb(error);
           } else {
+            if (!response.result==='updated') {
+              return cb(new Error(`Error updating record: ${response}`));
+            }
             return cb();
           }
         });
@@ -101,7 +104,9 @@ function newProduct (client, index, now, id, product, cb) {
     if (error) {
       return cb(error);
     } else {
-      console.log(response);
+      if (response.result!=='created') {
+        return cb(new Error(`Error adding record: ${response}`));
+      }
       return cb();
     }
   })

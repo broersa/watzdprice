@@ -47,7 +47,7 @@ describe('index', function () {
         },
         create: function (record, cb) {
           expect(record.id).to.be.equal('andre-broers-572');
-          return cb();
+          return cb(null, { result: 'created' });
         }
       }
       index.updateProduct(client, 'nl-nl', moment('2016-01-01T00:00:00Z'), { name: 'Andre Broers', url: 'url' }, function (error) {
@@ -84,7 +84,7 @@ describe('index', function () {
         index: function (record, cb) {
           expect(record.id).to.be.equal('andre-broers-572');
           expect(record.body.price).to.be.equal(2);
-          return cb();
+          return cb(null, { result: 'updated' });
         }
       }
       index.updateProduct(client, 'nl-nl', moment('2016-01-01T00:00:00Z'), { name: 'Andre Broers', url: 'url', price: 2 }, function (error) {
