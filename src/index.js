@@ -7,13 +7,15 @@ var urlify = require('urlify').create({
   trim: true
 });
 
-var client = new elasticsearch.Client({
-  host: config.elastic_url,
-  log: 'trace'
-});
-
 module.exports = {
-  updateProduct: function (now, product, cb) {
+  openConnection: function(url, cb) {
+    var client = new elasticsearch.Client({
+      host: url,
+      log: 'trace'
+    });
+    cb(null, client);
+  },
+  updateProduct: function (client, now, product, cb) {
     var id = generateId(product.name, product.url);
     client.get({
       index: config.elastic_index,
@@ -52,7 +54,7 @@ module.exports = {
       }
     });
   },
-  findProducts: function (string, cb) {
+  findProducts: function (client, string, cb) {
     client.search({
       index: config.elastic_index,
       body: {
@@ -75,7 +77,7 @@ module.exports = {
   }
 }
 
-function newProduct (now, id, product, cb) {
+function newProduct (client, now, id, product, cb) {
   client.create({
     index: config.elastic_index,
     type: 'product',
