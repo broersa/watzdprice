@@ -57,7 +57,7 @@ module.exports = {
       index: config.elastic_index,
       body: {
         query: {
-          term: {
+          match: {
             name: string
           }
         }
@@ -66,7 +66,10 @@ module.exports = {
       if (error) {
         return cb(error);
       } else {
-        return cb(null, response);
+        if (response.hits.total>0) {
+          return cb(null, response.hits.hits[0]._source);
+        }
+        return cb(null, null);
       }
     });
   }
