@@ -4,6 +4,8 @@ var chai = require('chai');
 var expect = chai.expect;
 var sinon = require('sinon');
 var index = require('../src/index.js');
+var elasticsearch = require('elasticsearch');
+var moment = require('moment');
 
 describe('index', function () {
   var sandbox;
@@ -18,13 +20,20 @@ describe('index', function () {
     sandbox.restore();
   });
 
-  it('should run', function () {
-    // sandbox.stub(config, 'get', function (param) {
-    //   return '';
-    // })
-    index.updateProduct({name:'andre broers', url: 'http://www.example.com'}, function (error, result) {
-      console.log(result);
-      expect(error).to.be.null;
+  describe('getClient', function () {
+    it('should return a elasticsearch client', function (done) {
+      sandbox.stub(elasticsearch, 'Client', function (options) {
+        expect(options.url).to.be.equal('url');
+        return {
+          url: options.url
+        };
+      });
+      index.getClient({
+        url: 'url'
+      }, function (error, client) {
+        expect(client.url).to.be.equal('url');
+        done();
+      });
     });
   });
 });

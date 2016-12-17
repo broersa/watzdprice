@@ -4,7 +4,8 @@
   "description": "Library to manage webshop products and prices",
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/_mocha"
+    "test": "./node_modules/.bin/_mocha",
+    "cover": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.11.1",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "sinon": "^1.17.6"
   },

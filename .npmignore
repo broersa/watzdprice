@@ -6,3 +6,4 @@
 circle.yml
 test
 npm-debug.log
+coverage
