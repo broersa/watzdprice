@@ -20,18 +20,75 @@ describe('index', function () {
     sandbox.restore();
   });
 
-  describe('getClient', function () {
-    it('should return a elasticsearch client', function (done) {
+  describe('startSession', function () {
+    it('should return an elasticsearch client', function (done) {
       sandbox.stub(elasticsearch, 'Client', function (options) {
-        expect(options.url).to.be.equal('url');
+        expect(options.host).to.be.equal('url');
         return {
-          url: options.url
+          url: options.host
         };
       });
-      index.getClient({
-        url: 'url'
-      }, function (error, client) {
+      index.startSession('url', function (error, client) {
         expect(client.url).to.be.equal('url');
+        done();
+      });
+    });
+  });
+
+  describe('updateProduct', function () {
+    it('should create new product if product not found', function (done) {
+      var client = {
+        get: function (record, cb) {
+          expect(record.id).to.be.equal('andre-broers-572');
+          expect(record.type).to.be.equal('product');
+          expect(record.index).to.be.equal('nl-nl');
+          expect(record.ignore).to.be.equal(404);
+          return cb(null, {found: false});
+        },
+        create: function (record, cb) {
+          expect(record.id).to.be.equal('andre-broers-572');
+          return cb();
+        }
+      }
+      index.updateProduct(client, 'nl-nl', moment('2016-01-01T00:00:00Z'), { name: 'Andre Broers', url: 'url' }, function (error) {
+        expect(error).to.be.undefined;
+        done();
+      });
+    });
+    it('should update a product if the product is found', function (done) {
+      var client = {
+        get: function (record, cb) {
+          expect(record.id).to.be.equal('andre-broers-572');
+          expect(record.type).to.be.equal('product');
+          expect(record.index).to.be.equal('nl-nl');
+          expect(record.ignore).to.be.equal(404);
+          return cb(null, {
+            found: true,
+            _source: {
+              name: 'Andre Broers',
+              url: 'url',
+              description: 'My Description',
+              eancode: '12345',
+              shop: 'MyShop',
+              category: 'MyCategory',
+              image: 'MyImage',
+              timestamp: moment('2016-01-01T00:00:00Z'),
+              price: 1,
+              history: [{
+                timestamp: moment('2016-01-01T00:00:00Z'),
+                price: 1
+              }]
+            }
+          });
+        },
+        index: function (record, cb) {
+          expect(record.id).to.be.equal('andre-broers-572');
+          expect(record.body.price).to.be.equal(2);
+          return cb();
+        }
+      }
+      index.updateProduct(client, 'nl-nl', moment('2016-01-01T00:00:00Z'), { name: 'Andre Broers', url: 'url', price: 2 }, function (error) {
+        expect(error).to.be.undefined;
         done();
       });
     });

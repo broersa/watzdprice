@@ -8,17 +8,17 @@ var urlify = require('urlify').create({
 });
 
 module.exports = {
-  openConnection: function(url, cb) {
+  startSession: function(url, cb) {
     var client = new elasticsearch.Client({
       host: url,
       log: 'trace'
     });
     cb(null, client);
   },
-  updateProduct: function (client, now, product, cb) {
+  updateProduct: function (client, index, now, product, cb) {
     var id = generateId(product.name, product.url);
     client.get({
-      index: config.elastic_index,
+      index: index,
       type: 'product',
       id: id,
       ignore: 404
@@ -27,7 +27,7 @@ module.exports = {
         return cb(error);
       }
       if (!response.found) {
-        return newProduct(now, id, product, cb);
+        return newProduct(client, index, now, id, product, cb);
       } else {
         response._source.name = product.name;
         response._source.description = product.description;
@@ -47,7 +47,6 @@ module.exports = {
           if (error) {
             return cb(error);
           } else {
-            console.log(response);
             return cb();
           }
         });
@@ -77,11 +76,11 @@ module.exports = {
   }
 }
 
-function newProduct (client, now, id, product, cb) {
+function newProduct (client, index, now, id, product, cb) {
   client.create({
-    index: config.elastic_index,
+    index: index,
     type: 'product',
-    id: generateId(product.name, product.url),
+    id: id,
     body: {
       name: product.name,
       description: product.description,
