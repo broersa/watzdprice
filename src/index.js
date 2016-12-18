@@ -10,8 +10,7 @@ var urlify = require('urlify').create({
 module.exports = {
   startSession: function(url, cb) {
     var client = new elasticsearch.Client({
-      host: url,
-      log: 'trace'
+      host: url
     });
     cb(null, client);
   },
