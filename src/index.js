@@ -29,51 +29,7 @@ module.exports = {
       if (!response.found) {
         return newProduct(client, index, now, id, product, cb);
       } else {
-        response._source.name = product.name;
-        response._source.description = product.description;
-        response._source.eancode = product.eancode;
-        response._source.shop = product.shop;
-        response._source.category = product.category;
-        response._source.image = product.image;
-        response._source.timestamp = now;
-        response._source.price = product.price;
-        response._source.history.push({timestamp: now, price: product.price});
-        client.index({
-          index: config.elastic_index,
-          type: 'product',
-          id: id,
-          body: response._source
-        }, function (error, response) {
-          if (error) {
-            return cb(error);
-          } else {
-            if (!response.result==='updated') {
-              return cb(new Error(`Error updating record: ${response}`));
-            }
-            return cb();
-          }
-        });
-      }
-    });
-  },
-  findProducts: function (client, string, cb) {
-    client.search({
-      index: config.elastic_index,
-      body: {
-        query: {
-          match: {
-            name: string
-          }
-        }
-      }
-    }, function (error, response) {
-      if (error) {
-        return cb(error);
-      } else {
-        if (response.hits.total>0) {
-          return cb(null, response.hits.hits[0]._source);
-        }
-        return cb(null, null);
+        return updateProduct(client, index, now, id, product, response, cb);
       }
     });
   }
@@ -110,6 +66,33 @@ function newProduct (client, index, now, id, product, cb) {
       return cb();
     }
   })
+}
+
+function updateProduct (client, index, now, id, product, response, cb) {
+  response._source.name = product.name;
+  response._source.description = product.description;
+  response._source.eancode = product.eancode;
+  response._source.shop = product.shop;
+  response._source.category = product.category;
+  response._source.image = product.image;
+  response._source.timestamp = now;
+  response._source.price = product.price;
+  response._source.history.push({timestamp: now, price: product.price});
+  client.index({
+    index: config.elastic_index,
+    type: 'product',
+    id: id,
+    body: response._source
+  }, function (error, response) {
+    if (error) {
+      return cb(error);
+    } else {
+      if (!response.result==='updated') {
+        return cb(new Error(`Error updating record: ${response}`));
+      }
+      return cb();
+    }
+  });
 }
 
 function generateId (name, url) {
