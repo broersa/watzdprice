@@ -1,6 +1,6 @@
 {
   "name": "watzdprice",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Library to manage webshop products and prices",
   "main": "src/index.js",
   "scripts": {

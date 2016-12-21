@@ -78,7 +78,7 @@ function updateProduct (client, index, now, id, product, response, cb) {
   response._source.price = product.price;
   response._source.history.push({timestamp: now, price: product.price});
   client.index({
-    index: config.elastic_index,
+    index: index,
     type: 'product',
     id: id,
     body: response._source
